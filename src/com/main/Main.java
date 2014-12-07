@@ -3,18 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jarexecutor;
+package com.main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import com.main.jario.JarIOEnum;
+import com.main.jario.JarIOObjectHandler;
+import com.main.jario.JarIOPrintText;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Scanner;
-import org.json.*;
 
 /**
  *
@@ -36,17 +33,18 @@ public class Main
         InputStream stdout = process.getInputStream();
 
         StreamsHandler io = new StreamsHandler(stdin, stdout);                
-        LineWrapper lw = null;        
+        JarIOObjectHandler jarIOHandler = null;        
         while (io.hasNext())
         {            
-            String read = io.read();
-            lw = new LineWrapper(read);
+            String read = io.read();    
+            jarIOHandler = new JarIOObjectHandler(read);            
 //            System.out.println( "Type: " + lw.getType() + " Msg: " + lw.getMessage());
-            if(lw.getType() == Type.TEXT)
-            {
-                System.out.println("OUT: " + lw.getMessage());
+            if(jarIOHandler.getType() == JarIOEnum.PRINT_TEXT)
+            {                
+                JarIOPrintText pt = (JarIOPrintText)jarIOHandler.getObject();
+                System.out.println(pt.getMessage());                
             }
-            else if(lw.getType() == Type.COMMAND_WRITE)
+            else if(jarIOHandler.getType() == JarIOEnum.SEND_TEXT)
             {                         
                 io.write("Hello");
             }            
